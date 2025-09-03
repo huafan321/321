@@ -1,5 +1,5 @@
 public class NBody{
-    public static double readRadius(String filename) {
+    	public static double readRadius(String filename) {
         In in = new In(filename);
         int numPlanets = in.readInt();  // 读取行星数量（但忽略）
         double radius = in.readDouble(); // 读取宇宙半径
@@ -76,13 +76,14 @@ public class NBody{
 
 			StdDraw.show();
 			StdDraw.pause(10);
+
 		}
-		StdOut.printf("%d\n", planets.length);
-		StdOut.printf("%.2e\n", radius);
-		for (int i = 0; i < planets.length; i++) {
-   			 StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
-                  	planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
-                  	planets[i].yyVel, planets[i].mass, planets[i].imgFileName);
-		}
+		    StdOut.printf("%d\n", p.length);
+    StdOut.printf("%.2e\n", r);
+    for (int i = 0; i < p.length; i++) {
+        StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
+                      p[i].xxPos, p[i].yyPos, p[i].xxVel,
+                      p[i].yyVel, p[i].mass, p[i].imgFileName);
+	}
 	}
 }
