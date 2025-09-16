@@ -1,6 +1,6 @@
 public class LinkedListDeque<T> {
     public class TNode {
-        public T item;
+        private T item;
         public TNode pre;
         public TNode next;
 
@@ -11,8 +11,8 @@ public class LinkedListDeque<T> {
         }
     }
 
-    int size;
-    TNode sentinel;
+    private int size;
+    private TNode sentinel;
 
     public  LinkedListDeque(){
         size = 0;
@@ -70,8 +70,12 @@ public class LinkedListDeque<T> {
     }
     public T removeLast()
     {
+        if (size == 0)
+        {
+            return null;
+        }
         size--;
-        T ans = sentinel.next.item;
+        T ans = sentinel.pre.item;
         TNode g = sentinel.pre;
 
         g.pre.next = g.next;
@@ -102,7 +106,7 @@ public class LinkedListDeque<T> {
         return helper(sentinel.next,index);
     }
 
-    public T helper (TNode node, int index)
+    private T helper (TNode node, int index)
     {
         if (index == 0)
         {
