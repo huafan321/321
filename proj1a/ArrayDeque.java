@@ -1,19 +1,28 @@
 public class ArrayDeque<T> {
     private T[] items;
     private int size;
-    private int  capacity;
+    private  int front;
+    private  int last;
+
+    public ArrayDeque()
+    {
+        items = (T[]) new Object[8];
+        size = 0;
+        front = 3;
+        last = 3;
+    }
 
     public  void addFirst(T item) {
-
-        for (int i = size; i > 0; i--) {
-            items[i] = items[i - 1];
-        }
-        items[0] = item;
-        size += 1;
+        resize();
+        items[minusOne(front)] = item;
+        front = minusOne(front);
+        size++;
     }
     public void addLast(T item) {
-        items[size] = item;
-        size += 1;
+        resize();
+        items[addOne(last)] = item;
+        last = addOne(last);
+        size++;
     }
     public boolean isEmpty() {
         return size == 0;
@@ -22,42 +31,78 @@ public class ArrayDeque<T> {
         return  size;
     }
     public void printDeque() {
-        for (int i = 0; i < size; i++) {
-            System.out.print(items[i]);
+        int i = front;
+        while(addOne(i) != last)
+        {
+            System.out.println(items[i]);
         }
     }
     public T removeFirst() {
-        size--;
-        resize();
-        T ans = items[0];
-        for (int i = 0; i < size; i++) {
-            items[i] = items[i + 1];
+        if (size == 0)
+        {
+            return null;
         }
+
+        T ans = items[front];
+        items[front] = null;
+        front = addOne(front);
+        resize();
+        size--;
         return ans;
     }
     public T removeLast() {
-        T ans = items[size];
+        if (size == 0)
+        {
+            return null;
+        }
+        T ans = items[last];
+        items[last] = null;
+        last = minusOne(last);
         size--;
         return ans;
     }
     public T get(int index) {
-        return items[index - 1];
+        int i =0;
+        int ans = front;
+        while(i < index)
+        {
+            ans = addOne(ans);
+            i++;
+        }
+        return items[ans];
     }
     private void resize() {
-        int newcapacity = capacity;
-
-        if (size >= capacity) {
-           newcapacity = 2 * capacity;
+        if (size == items.length)
+        {
+            T[] a = (T[]) new Object[size * 2];
+            for (int i =0; i < size; i++)
+            {
+                int oldIndex = (front + i) % items.length;
+                a[i] = items[oldIndex];
+            }
+            items = a;
+            front = 0;
+            last = size;
         }
-        else if(capacity > 1 && size <= capacity / 4) {
-            newcapacity = capacity / 2;
+        else if ((size < items.length/4) && (items.length >= 16))
+        {
+            T[] a = (T[]) new Object[size / 2];
+            for (int i =0; i < size; i++)
+            {
+                int oldIndex = (front + i) % items.length;
+                a[i] = items[oldIndex];
+            }
+            items = a;
+            front = 0;
+            last = size;
         }
-        else return;
-
-        T[] newArray = (T[]) new Object[newcapacity];
-        System.arraycopy(items, 0, newArray, 0, size);
-
-        items = newArray;
-        capacity = newcapacity;
+    }
+    private int minusOne(int index)
+    {
+        return  (index - 1 + items.length) % items.length;
+    }
+    private int addOne(int index)
+    {
+        return  (index + 1 + items.length) % items.length;
     }
 }
