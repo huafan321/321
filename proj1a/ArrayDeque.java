@@ -8,8 +8,8 @@ public class ArrayDeque<T> {
     {
         items = (T[]) new Object[8];
         size = 0;
-        front = 3;
-        last = 3;
+        front = 0;
+        last = 0;
     }
 
     public  void addFirst(T item) {
@@ -46,8 +46,8 @@ public class ArrayDeque<T> {
         T ans = items[front];
         items[front] = null;
         front = addOne(front);
-        resize();
         size--;
+        resize();
         return ans;
     }
     public T removeLast() {
@@ -55,9 +55,9 @@ public class ArrayDeque<T> {
         {
             return null;
         }
+        last = minusOne(last);
         T ans = items[last];
         items[last] = null;
-        last = minusOne(last);
         size--;
         return ans;
     }
