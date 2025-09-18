@@ -13,16 +13,17 @@ public class ArrayDeque<T> {
     }
 
     public  void addFirst(T item) {
-        resize();
+
         items[minusOne(front)] = item;
         front = minusOne(front);
         size++;
+        resize();
     }
     public void addLast(T item) {
-        resize();
-        items[addOne(last)] = item;
+        items[last] = item;
         last = addOne(last);
         size++;
+        resize();
     }
     public boolean isEmpty() {
         return size == 0;
@@ -35,6 +36,7 @@ public class ArrayDeque<T> {
         while(addOne(i) != last)
         {
             System.out.println(items[i]);
+            i+=1;
         }
     }
     public T removeFirst() {
@@ -59,22 +61,19 @@ public class ArrayDeque<T> {
         T ans = items[last];
         items[last] = null;
         size--;
+        resize();
         return ans;
     }
     public T get(int index) {
-        int i =0;
-        int ans = front;
-        while(i < index)
-        {
-            ans = addOne(ans);
-            i++;
+        if (index < 0 || index >= size) {
+            return null;
         }
-        return items[ans];
+        return items[(index + front) % items.length];
     }
     private void resize() {
         if (size == items.length)
         {
-            T[] a = (T[]) new Object[size * 2];
+            T[] a = (T[]) new Object[items.length * 2];
             for (int i =0; i < size; i++)
             {
                 int oldIndex = (front + i) % items.length;
@@ -86,7 +85,7 @@ public class ArrayDeque<T> {
         }
         else if ((size < items.length/4) && (items.length >= 16))
         {
-            T[] a = (T[]) new Object[size / 2];
+            T[] a = (T[]) new Object[items.length / 2];
             for (int i =0; i < size; i++)
             {
                 int oldIndex = (front + i) % items.length;
