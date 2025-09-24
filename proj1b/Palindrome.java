@@ -32,7 +32,7 @@ public class Palindrome {
         return true;
     }
 
-    public boolean helper(Deque<Character> alpha)
+    private boolean helper(Deque<Character> alpha)
     {
         if ((alpha.size() == 1) || (alpha.isEmpty()))
         {
