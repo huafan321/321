@@ -1,8 +1,10 @@
 // TODO: Make sure to make this class a part of the synthesizer package
-//package <package name>;
+package synthesizer;
+// Make sure this class is public
 
-//Make sure this class is public
-public class GuitarString {
+import jdk.jfr.Frequency;
+
+public class GuitarString{
     /** Constants. Do not change. In case you're curious, the keyword final means
      * the values cannot be changed at runtime. We'll discuss this and other topics
      * in lecture on Friday. */
@@ -18,6 +20,12 @@ public class GuitarString {
         //       cast the result of this divsion operation into an int. For better
         //       accuracy, use the Math.round() function before casting.
         //       Your buffer should be initially filled with zeros.
+        double num = Math.round(SR / frequency);
+        buffer = new ArrayRingBuffer<>((int)num);
+        for (int i = 0; i < buffer.capacity(); i++)
+        {
+            buffer.enqueue(0.0);
+        }
     }
 
 
@@ -28,6 +36,12 @@ public class GuitarString {
         //       double r = Math.random() - 0.5;
         //
         //       Make sure that your random numbers are different from each other.
+
+        for (int i = 0; i < buffer.capacity(); i++) {
+            buffer.dequeue();
+            double r = Math.random() - 0.5;
+            buffer.enqueue(r);
+        }
     }
 
     /* Advance the simulation one time step by performing one iteration of
@@ -37,11 +51,15 @@ public class GuitarString {
         // TODO: Dequeue the front sample and enqueue a new sample that is
         //       the average of the two multiplied by the DECAY factor.
         //       Do not call StdAudio.play().
+        double first = buffer.dequeue();
+        double second = buffer.peek();
+        double newsp =( first + second) * 0.5 * DECAY;
+        buffer.enqueue(newsp);
     }
 
     /* Return the double at the front of the buffer. */
     public double sample() {
         // TODO: Return the correct thing.
-        return 0;
+        return buffer.peek();
     }
 }
