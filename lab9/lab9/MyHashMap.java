@@ -1,5 +1,6 @@
 package lab9;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         buckets = new ArrayMap[DEFAULT_SIZE];
         this.clear();
     }
+
 
     /* Removes all of the mappings from this map. */
     @Override
@@ -53,19 +55,48 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        int index = hash(key);
+        if(buckets[index].containsKey(key)) return buckets[index].get(key);
+        return null;
     }
 
     /* Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        int index = hash(key);
+        if (!buckets[index].containsKey(key)){
+            buckets[index].put(key,value);
+            size += 1;
+        }
+        else buckets[index].put(key,value);
+
+        if ((double) size / buckets.length > 0.75) {
+            resize(buckets.length * 2);
+        }
     }
 
     /* Returns the number of key-value mappings in this map. */
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return size;
+    }
+
+    private void resize(int num){
+        ArrayMap<K, V>[] newHash = new ArrayMap[num];
+        for (int i = 0; i < num; i++){
+            newHash[i] = new ArrayMap<>();
+        }
+
+        for (int i =0; i < buckets.length; i++){
+            for(K key : buckets[i]){
+                V value = buckets[i].get(key);
+
+                int newIndex = hash(key);
+                newHash[newIndex].put(key,value);
+            }
+        }
+
+        buckets = newHash;
     }
 
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
@@ -73,7 +104,13 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        HashSet<K> ans = new HashSet<>();
+        for (int i = 0; i < buckets.length; i++){
+            for(K key : buckets[i].keySet()){
+                ans.add(key);
+            }
+        }
+        return ans;
     }
 
     /* Removes the mapping for the specified key from this map if exists.
@@ -81,7 +118,13 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * UnsupportedOperationException. */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        int index = hash(key);
+        if(buckets[index].containsKey(key)){
+            V value = buckets[index].get(key);
+            buckets[index].remove(key);
+            return value;
+        }
+        return null;
     }
 
     /* Removes the entry for the specified key only if it is currently mapped to
@@ -89,11 +132,41 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * throw an UnsupportedOperationException.*/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        int index = hash(key);
+        if(buckets[index].containsKey(key)){
+           if(buckets[index].get(key).equals(value)) {
+               buckets[index].remove(key);
+               return value;
+           }
+        }
+        return null;
     }
 
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new Iterator<K>() {
+            private int bucketIndex = 0;             // 当前桶索引
+            private Iterator<K> keyIterator = null;  // 当前桶内部迭代器
+
+            // 找到下一个有元素的桶
+            private void advance() {
+                while ((keyIterator == null || !keyIterator.hasNext()) && bucketIndex < buckets.length) {
+                    keyIterator = buckets[bucketIndex].keySet().iterator();
+                    bucketIndex++;
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                advance();
+                return keyIterator != null && keyIterator.hasNext();
+            }
+
+            @Override
+            public K next() {
+                advance();
+                return keyIterator.next();
+            }
+        };
     }
 }
