@@ -38,23 +38,6 @@ public class PercolationStats {
             int col = StdRandom.uniform(n);
             p.open(row,col);
         }
-        return 1.0 * p.numberOfOpenSites() /n*n;
-    }
-
-    public static void main(String[] args) {
-        int N = 20; // 网格大小 20x20
-        int T = 30; // 实验次数
-
-        // 创建一个 PercolationFactory
-        PercolationFactory pf = new PercolationFactory();
-
-        // 创建 PercolationStats 对象，进行 T 次实验
-        PercolationStats stats = new PercolationStats(N, T, pf);
-
-        // 打印结果
-        System.out.printf("mean                    = %.5f%n", stats.mean());
-        System.out.printf("stddev                  = %.5f%n", stats.stddev());
-        System.out.printf("95%% confidence interval = [%.5f, %.5f]%n",
-                stats.confidenceLow(), stats.confidenceHigh());
+        return 1.0 * p.numberOfOpenSites() /(n*n);
     }
 }

@@ -8,6 +8,7 @@ public class Percolation {
     private boolean[][] grid;
     private int openSitesNum;
     private WeightedQuickUnionUF connected;
+    private WeightedQuickUnionUF ufFull;
     private int virtualTop;
     private int virtualBottom;
     public Percolation(int N){ // create N-by-N grid, with all sites initially blocked
@@ -16,6 +17,7 @@ public class Percolation {
             length = N;
             grid = new boolean[N][N];
             connected = new WeightedQuickUnionUF(N*N + 2);
+            ufFull = new WeightedQuickUnionUF(N*N +1);
             virtualTop = N*N;
             virtualBottom = N*N + 1;
         }
@@ -24,10 +26,15 @@ public class Percolation {
     {
         int id = row*length + col;
         if((row < 0 || row > length -1 ) || (col < 0 || col > length - 1)) throw new IndexOutOfBoundsException();
-        else if (!isOpen(row,col)){
+        if (!isOpen(row,col)){
             grid[row][col] = true;
-            if (row == 0) connected.union(id,virtualTop);
-            if (row == length - 1) connected.union(id,virtualBottom);
+            if (row == 0) {
+                ufFull.union(id, virtualTop);
+                connected.union(id,virtualTop);
+            }
+            if (row == length - 1) {
+                connected.union(id,virtualBottom);
+            }
             openSitesNum += 1;
             checkConnected(row,col);
         }
@@ -40,7 +47,7 @@ public class Percolation {
     }
     public boolean isFull(int row, int col){// is the site (row, col) full?
         int id = row*length + col;
-        return connected.find(id) == connected.find(virtualTop);
+        return ufFull.find(id) == ufFull.find(virtualTop);
     }
     public int numberOfOpenSites() { // number of open sites
         return openSitesNum;
@@ -53,19 +60,22 @@ public class Percolation {
         // 上
         if(row > 0 && grid[row - 1][col]) {
             connected.union(id, id - length);
+            ufFull.union(id,id - length);
         }
         // 下
         if(row < length - 1 && grid[row + 1][col]) {
             connected.union(id, id + length);
+            ufFull.union(id,id + length);
         }
         // 左
         if(col > 0 && grid[row][col - 1]) {
             connected.union(id, id - 1);
+            ufFull.union(id,id - 1);
         }
         // 右
         if(col < length - 1 && grid[row][col + 1]) {
             connected.union(id, id + 1);
+            ufFull.union(id,id+1);
         }
     }
-    public static void main(String[] args){}   // use for unit testing (not required)
 }
