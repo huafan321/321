@@ -15,6 +15,10 @@ public class Solver {
         node k = new node(initial, 0, null,0);
         pq.insert(k);
         bestGCost.put(initial,0);
+
+        if (initial.isGoal()) {
+            last = k;
+        }
     }
 
     public int moves(){
