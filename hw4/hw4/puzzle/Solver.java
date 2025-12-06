@@ -16,45 +16,12 @@ public class Solver {
         pq.insert(k);
         bestGCost.put(initial,0);
 
-        if (initial.isGoal()) {
-            last = k;
-        }
+        astarSearch();
     }
 
     public int moves(){
-        Map<WorldState, Integer> hCache = new HashMap<>();
-        while (!pq.isEmpty()) {
-            node x = pq.delMin();
-
-            // 如果这个节点不是到该状态的最佳路径，跳过
-            if (x.moves != bestGCost.get(x.current)) {
-                continue;
-            }
-
-            // 目标就结束
-            if (x.current.isGoal()) {
-                last = x;
-                return x.moves;
-            }
-
-            // 扩展邻居
-            for (WorldState n : x.current.neighbors()) {
-                if (x.previous != null && n.equals(x.previous.current)) continue;
-                int newG = x.moves + 1;
-
-                // 剪枝：只考虑比旧路径更优的情况
-                if (!bestGCost.containsKey(n) || newG < bestGCost.get(n)) {
-
-                    bestGCost.put(n, newG);
-
-                    // 缓存 h 值
-                    int h = hCache.computeIfAbsent(n, k -> k.estimatedDistanceToGoal());
-
-                    pq.insert(new node(n, newG, x, h));
-                }
-            }
-        }
-        return -1;
+        if (last == null) return -1;
+        return last.moves;
     }
 
     public Iterable<WorldState> solution(){
@@ -87,6 +54,33 @@ public class Solver {
             return priority - o.priority;
         }
     }
+    private void astarSearch() {
+        Map<WorldState, Integer> hCache = new HashMap<>();
+
+        while (!pq.isEmpty()) {
+            node x = pq.delMin();
+
+            if (x.moves != bestGCost.get(x.current)) continue;
+
+            if (x.current.isGoal()) {
+                last = x;
+                return;
+            }
+
+            for (WorldState n : x.current.neighbors()) {
+                if (x.previous != null && n.equals(x.previous.current)) continue;
+
+                int newG = x.moves + 1;
+
+                if (!bestGCost.containsKey(n) || newG < bestGCost.get(n)) {
+                    bestGCost.put(n, newG);
+
+                    int h = hCache.computeIfAbsent(n, k -> k.estimatedDistanceToGoal());
+
+                    pq.insert(new node(n, newG, x, h));
+                }
+            }
+        }
+    }
+
 }
-
-
