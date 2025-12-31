@@ -35,7 +35,13 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> q = new Queue<>();
+        for(Item t : items){
+            Queue<Item> tmp  = new Queue<>();
+            tmp.enqueue(t);
+            q.enqueue(tmp);
+        }
+        return q;
     }
 
     /**
@@ -54,13 +60,70 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> q = new Queue<>();
+        int n = q1.size() + q2.size();
+        for (int i = 0; i < n; i++) {
+           Item tmp = getMin(q1,q2);
+           q.enqueue(tmp);
+        }
+        return q;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
+        Queue<Queue<Item>> tmp = makeSingleItemQueues(items);
+        Queue<Item> q = new Queue<>();
+        int n = tmp.size();
+        for(int i = 0; i < n; i++){
+           q = mergeSortedQueues(q,tmp.dequeue());
+        }
+        items = q;
         return items;
+    }
+    public static void main(String agrv[]){
+        testNum();
+    }
+
+    private static void testString(){
+        Queue<String> students = new Queue<>();
+
+        students.enqueue("Alice");
+        students.enqueue("Vanessa");
+        students.enqueue("Ethan");
+        students.enqueue("Jackson");
+        students.enqueue("Oner");
+        printQueue(students);
+
+        students =  MergeSort.mergeSort(students);
+        printQueue(students);
+
+    }
+    private static void testNum(){
+        Queue<Integer> num = new Queue<>();
+        num.enqueue(6);
+        num.enqueue(9);
+        num.enqueue(8);
+        num.enqueue(2);
+        num.enqueue(31);
+        num.enqueue(40);
+        num.enqueue(68);
+        num.enqueue(90);
+        num.enqueue(0);
+        num.enqueue(112);
+        num.enqueue(3242);
+        printQueue(num);
+        num = MergeSort.mergeSort(num);
+        printQueue(num);
+    }
+
+    private static<T> void printQueue(Queue<T> q){
+        if (q.isEmpty()) return;
+        for (T element : q) {
+            System.out.println(element);
+        }
+
+        System.out.println("-----------------------------------------");
     }
 }
